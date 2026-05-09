@@ -1,0 +1,33 @@
+{
+  "name": "bodeyco",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "esbuild src/main.js --bundle --outfile=dist/main.js --format=esm --minify",
+    "dev": "concurrently \"vite\" \"./tunnel.sh\"",
+    "vite": "vite",
+    "tunnel": "./tunnel.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nslt-studio/bodeyco.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/nslt-studio/bodeyco/issues"
+  },
+  "homepage": "https://github.com/nslt-studio/bodeyco#readme",
+  "dependencies": {
+    "embla-carousel": "^8.6.0",
+    "swup": "^4.9.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "esbuild": "^0.28.0",
+    "vite": "^8.0.11"
+  }
+}
