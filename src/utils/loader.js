@@ -43,9 +43,9 @@ export function initLoader() {
             }, DUR);
 
           }, DUR + 450);
-        }, DUR + 900);
-      }, DUR + 450);
-    }, DUR + 900);
+        }, DUR + 750);
+      }, DUR + 150);
+    }, DUR + 750);
 
   }, INIT_DELAY);
 }

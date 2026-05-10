@@ -5,6 +5,38 @@ import { initVideoControls } from '../utils/video-controls.js';
 export function initProjectsDetails() {
   initEmbla();
   initMoreButton();
+  initCursor();
+}
+
+function initCursor() {
+  const cursor  = document.querySelector('.cursor');
+  const prevBtn = document.querySelector('.embla__prev');
+  const nextBtn = document.querySelector('.embla__next');
+  if (!cursor || !prevBtn || !nextBtn) return;
+
+  cursor.style.transition = 'opacity 150ms ease';
+  cursor.style.opacity    = '0';
+
+  const move = (e) => {
+    cursor.style.left = `${e.clientX}px`;
+    cursor.style.top  = `${e.clientY}px`;
+  };
+
+  const show = (text, e) => {
+    cursor.textContent = text;
+    move(e);
+    cursor.style.opacity = '1';
+  };
+
+  const hide = () => { cursor.style.opacity = '0'; };
+
+  prevBtn.addEventListener('mouseenter', (e) => show('Prev', e));
+  prevBtn.addEventListener('mousemove',  move);
+  prevBtn.addEventListener('mouseleave', hide);
+
+  nextBtn.addEventListener('mouseenter', (e) => show('Next', e));
+  nextBtn.addEventListener('mousemove',  move);
+  nextBtn.addEventListener('mouseleave', hide);
 }
 
 // ─── Embla ────────────────────────────────────────────────────────────────────
