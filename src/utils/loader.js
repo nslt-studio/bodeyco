@@ -1,54 +1,51 @@
-const INIT_DELAY = 600; // ms avant de commencer
-const STAGGER    = 20;  // ms entre chaque lettre
-const DUR        = 300; // ms pour toutes les transitions
+const INIT_DELAY = 450; // ms avant de commencer
+const DUR        = 300; // ms pour chaque transition ease
 
 export function initLoader() {
-  const loader   = document.querySelector('.loader');
-  const headline = loader?.querySelector('#headline');
-  if (!loader || !headline) return;
+  const loader = document.querySelector('.loader');
+  const h01    = loader?.querySelector('#headline01');
+  const h02    = loader?.querySelector('#headline02');
+  if (!loader || !h01 || !h02) return;
 
   document.body.style.overflow = 'hidden';
 
-  // Découper le texte en spans par lettre
-  const chars = [...headline.textContent];
-  headline.innerHTML = '';
+  const animIn = (el) => {
+    el.style.transition = `opacity ${DUR}ms ease, transform ${DUR}ms ease`;
+    el.style.opacity    = '1';
+    el.style.transform  = 'translateY(0px)';
+  };
 
-  const spans = chars.map((char) => {
-    const span = document.createElement('span');
-    span.textContent = char === ' ' ? ' ' : char;
-    span.style.cssText = `opacity:${char === ' ' ? '1' : '0'}; transition:opacity ${DUR}ms ease;`;
-    headline.appendChild(span);
-    return span;
-  });
+  const animOut = (el) => {
+    el.style.transition = `opacity ${DUR}ms ease`;
+    el.style.opacity    = '0';
+  };
 
   setTimeout(() => {
-    headline.style.opacity = '1';
 
-    // Stagger in lettre par lettre
-    let letterIdx = 0;
-    spans.forEach((span, i) => {
-      if (chars[i] === ' ') return;
-      setTimeout(() => { span.style.opacity = '1'; }, letterIdx * STAGGER);
-      letterIdx++;
-    });
+    animIn(h01);                              // h01 entre
 
-    const revealDone = (letterIdx - 1) * STAGGER + DUR;
-
-    // Attente 600ms → fade out #headline → attente 600ms → fade out loader → remove
     setTimeout(() => {
-      headline.style.transition = `opacity ${DUR}ms ease`;
-      headline.style.opacity    = '0';
+      animOut(h01);                           // h01 sort après 900ms d'affichage
 
       setTimeout(() => {
-        loader.style.transition = `opacity ${DUR}ms ease`;
-        loader.style.opacity    = '0';
+        animIn(h02);                          // h02 entre 600ms après la fin du fade out
 
         setTimeout(() => {
-          loader.remove();
-          document.body.style.overflow = '';
-        }, DUR);
-      }, DUR + 300);
-    }, revealDone + 600);
+          animOut(h02);                       // h02 sort après 900ms d'affichage
+
+          setTimeout(() => {
+            loader.style.transition = `opacity ${DUR}ms ease`;
+            loader.style.opacity    = '0';   // loader sort 600ms après la fin du fade out h02
+
+            setTimeout(() => {
+              loader.remove();
+              document.body.style.overflow = '';
+            }, DUR);
+
+          }, DUR + 450);
+        }, DUR + 900);
+      }, DUR + 450);
+    }, DUR + 900);
 
   }, INIT_DELAY);
 }

@@ -1,8 +1,20 @@
 import { pad, animateIndex } from '../utils/counter.js';
+import { initVideoControls } from '../utils/video-controls.js';
 
 export function initHome() {
   initSelectedAspectRatios();
   initScrollCounter();
+  initSelectedControls();
+}
+
+function initSelectedControls() {
+  document.querySelectorAll('.selected-item').forEach((item) => {
+    const video    = item.querySelector('video');
+    const controls = item.querySelector('.controls');
+    if (!video || !controls) return;
+    controls.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); });
+    initVideoControls(video, controls);
+  });
 }
 
 // ─── Aspect ratio ────────────────────────────────────────────────────────────

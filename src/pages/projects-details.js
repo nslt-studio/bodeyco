@@ -1,5 +1,6 @@
 import EmblaCarousel from 'embla-carousel';
 import { pad, animateIndex } from '../utils/counter.js';
+import { initVideoControls } from '../utils/video-controls.js';
 
 export function initProjectsDetails() {
   initEmbla();
@@ -60,6 +61,12 @@ function initEmbla() {
 
   initSlideVideos(slides);
   setActiveVideo(slides, 0);
+
+  slides.forEach((slide) => {
+    const video    = slide.querySelector('video');
+    const controls = slide.querySelector('.controls');
+    if (video && controls) initVideoControls(video, controls);
+  });
 }
 
 // ─── Vidéos dans les slides ───────────────────────────────────────────────────
