@@ -1,51 +1,51 @@
-const INIT_DELAY = 450; // ms avant de commencer
-const DUR        = 300; // ms pour chaque transition ease
+import { getLenis } from './lenis.js';
+
+const INIT_DELAY   = 450;
+const DUR          = 300;
+const WORD_STAGGER = 60;
 
 export function initLoader() {
-  const loader = document.querySelector('.loader');
-  const h01    = loader?.querySelector('#headline01');
-  const h02    = loader?.querySelector('#headline02');
-  if (!loader || !h01 || !h02) return;
+  const loader   = document.querySelector('.loader');
+  const headline = loader?.querySelector('#headline');
+  if (!loader || !headline) return;
 
-  document.body.style.overflow = 'hidden';
+  getLenis()?.stop();
 
-  const animIn = (el) => {
-    el.style.transition = `opacity ${DUR}ms ease, transform ${DUR}ms ease`;
-    el.style.opacity    = '1';
-    el.style.transform  = 'translateY(0px)';
-  };
+  const words = headline.textContent.trim().split(/\s+/);
 
-  const animOut = (el) => {
-    el.style.transition = `opacity ${DUR}ms ease`;
-    el.style.opacity    = '0';
-  };
+  headline.innerHTML = words
+    .map(w => `<span style="display:inline-block;opacity:0;transform:translateY(12px)">${w}</span>`)
+    .join(' ');
+
+  headline.style.opacity = '1';
+
+  const spans = Array.from(headline.querySelectorAll('span'));
 
   setTimeout(() => {
+    spans.forEach((span, i) => {
+      setTimeout(() => {
+        span.style.transition = `opacity ${DUR}ms ease, transform ${DUR}ms ease`;
+        span.style.opacity    = '1';
+        span.style.transform  = 'translateY(0px)';
+      }, i * WORD_STAGGER);
+    });
 
-    animIn(h01);                              // h01 entre
+    const animInDone = (spans.length - 1) * WORD_STAGGER + DUR;
 
     setTimeout(() => {
-      animOut(h01);                           // h01 sort après 900ms d'affichage
+      headline.style.transition = `opacity ${DUR}ms ease`;
+      headline.style.opacity    = '0';
 
       setTimeout(() => {
-        animIn(h02);                          // h02 entre 600ms après la fin du fade out
+        loader.style.transition = `opacity ${DUR}ms ease`;
+        loader.style.opacity    = '0';
 
         setTimeout(() => {
-          animOut(h02);                       // h02 sort après 900ms d'affichage
-
-          setTimeout(() => {
-            loader.style.transition = `opacity ${DUR}ms ease`;
-            loader.style.opacity    = '0';   // loader sort 600ms après la fin du fade out h02
-
-            setTimeout(() => {
-              loader.remove();
-              document.body.style.overflow = '';
-            }, DUR);
-
-          }, DUR + 450);
-        }, DUR + 750);
-      }, DUR + 150);
-    }, DUR + 750);
+          loader.remove();
+          getLenis()?.start();
+        }, DUR);
+      }, DUR + 450);
+    }, animInDone + 750);
 
   }, INIT_DELAY);
 }

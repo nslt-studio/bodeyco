@@ -8,6 +8,7 @@ import { initMedia } from './utils/media.js';
 import { updateCurrentLinks } from './utils/navigation.js';
 import { initLoader } from './utils/loader.js';
 import { initClock } from './utils/clock.js';
+import { initLenis } from './utils/lenis.js';
 
 const PAGE_INIT = {
   home: initHome,
@@ -30,8 +31,10 @@ function initPage() {
 
 const swup = new Swup({
   containers: ['.page-transition'],
+  animationSelector: '.page-transition',
 });
 
+initLenis();
 initLoader();
 initPage();
 initMedia();
@@ -39,6 +42,7 @@ initClock();
 updateCurrentLinks();
 
 swup.hooks.on('page:view', () => {
+  initLenis();
   initPage();
   initMedia();
   initClock();

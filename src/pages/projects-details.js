@@ -1,6 +1,7 @@
 import EmblaCarousel from 'embla-carousel';
 import { pad, animateIndex } from '../utils/counter.js';
 import { initVideoControls } from '../utils/video-controls.js';
+import { getLenis } from '../utils/lenis.js';
 
 export function initProjectsDetails() {
   initEmbla();
@@ -137,21 +138,19 @@ function setActiveVideo(slides, activeIndex) {
 
 function initMoreButton() {
   const moreBtn      = document.querySelector('#more');
-  const emblaSection = document.querySelector('#embla');
   const aboutSection = document.querySelector('#about');
-  const container    = document.querySelector('.project-details');
 
-  if (!moreBtn || !emblaSection || !aboutSection || !container) return;
+  if (!moreBtn || !aboutSection) return;
 
   let onAbout = false;
-
   moreBtn.textContent = 'More';
 
   moreBtn.addEventListener('click', () => {
-    container.scrollTo({
-      top: onAbout ? 0 : container.scrollHeight,
-      behavior: 'smooth',
-    });
+    if (onAbout) {
+      getLenis()?.scrollTo(0);
+    } else {
+      getLenis()?.scrollTo(aboutSection);
+    }
   });
 
   const observer = new IntersectionObserver(
@@ -162,7 +161,7 @@ function initMoreButton() {
         moreBtn.textContent = onAbout ? 'Less' : 'More';
       });
     },
-    { root: container, threshold: 0.5 }
+    { threshold: 0.5 }
   );
 
   observer.observe(aboutSection);

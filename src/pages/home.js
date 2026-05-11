@@ -1,7 +1,9 @@
 import { pad, animateIndex } from '../utils/counter.js';
 import { initVideoControls } from '../utils/video-controls.js';
+import { destroyLenis } from '../utils/lenis.js';
 
 export function initHome() {
+  destroyLenis();
   initSelectedAspectRatios();
   initScrollCounter();
   initSelectedControls();
