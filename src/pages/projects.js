@@ -1,3 +1,5 @@
+import { getLenis } from '../utils/lenis.js';
+
 export function initProjects() {
   initViewToggle();
   initIndexHover();
@@ -94,7 +96,7 @@ function initIndexHover() {
     indexItem.addEventListener('mouseenter', () => {
       gridItem.style.transition = `opacity ${ITEM_DUR}ms ease`;
       gridItem.style.opacity    = '1';
-      gridItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      getLenis()?.scrollTo(gridItem, { offset: 0, lerp: 0.08 });
     });
 
     indexItem.addEventListener('mouseleave', () => {

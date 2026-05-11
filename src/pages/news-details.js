@@ -1,11 +1,14 @@
 import EmblaCarousel from 'embla-carousel';
 import { initViewportVideos } from '../utils/viewport-video.js';
 import { initVideoControls } from '../utils/video-controls.js';
+import { getLenis } from '../utils/lenis.js';
+import { pad, animateIndex } from '../utils/counter.js';
 
 export function initNewsDetails() {
   initViewportVideos();
   initEmbla();
   initCursor();
+  initMoreButton();
 }
 
 function initCursor() {
@@ -39,6 +42,8 @@ function initCursor() {
   nextBtn.addEventListener('mouseleave', hide);
 }
 
+// ─── Embla ────────────────────────────────────────────────────────────────────
+
 function initEmbla() {
   const viewport = document.querySelector('.embla__viewport');
   if (!viewport) return;
@@ -47,11 +52,16 @@ function initEmbla() {
   const slides  = embla.slideNodes();
   const prevBtn = document.querySelector('.embla__prev');
   const nextBtn = document.querySelector('.embla__next');
+  const indexEl = document.querySelector('#index');
+  const totalEl = document.querySelector('#total');
 
   slides.forEach((slide, i) => {
     slide.style.transition = 'none';
     slide.style.opacity    = i === 0 ? '1' : '0';
   });
+
+  if (totalEl) totalEl.textContent = pad(slides.length);
+  if (indexEl) indexEl.textContent = pad(1);
 
   let direction = 1;
 
@@ -63,6 +73,7 @@ function initEmbla() {
       slide.style.opacity    = i === selected ? '1' : '0';
     });
 
+    if (indexEl) animateIndex(indexEl, selected + 1, direction);
     setActiveVideo(slides, selected);
   });
 
@@ -120,4 +131,37 @@ function setActiveVideo(slides, activeIndex) {
       video.pause();
     }
   });
+}
+
+// ─── More / Less ──────────────────────────────────────────────────────────────
+
+function initMoreButton() {
+  const moreBtn      = document.querySelector('.more-button');
+  const emblaSection = document.querySelector('#embla');
+  const aboutSection = document.querySelector('#about');
+  if (!moreBtn || !emblaSection || !aboutSection) return;
+
+  let onAbout = false;
+  moreBtn.textContent = 'More';
+
+  moreBtn.addEventListener('click', () => {
+    if (onAbout) {
+      getLenis()?.scrollTo(emblaSection);
+    } else {
+      getLenis()?.scrollTo(aboutSection);
+    }
+  });
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.target !== aboutSection) return;
+        onAbout = entry.isIntersecting;
+        moreBtn.textContent = onAbout ? 'Less' : 'More';
+      });
+    },
+    { threshold: 0.5 }
+  );
+
+  observer.observe(aboutSection);
 }
