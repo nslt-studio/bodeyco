@@ -1,7 +1,9 @@
 import { pad, animateIndex } from '../utils/counter.js';
 import { initVideoControls } from '../utils/video-controls.js';
+import { destroyLenis } from '../utils/lenis.js';
 
 export function initHome() {
+  destroyLenis();
   initSelectedAspectRatios();
   initScrollCounter();
   initSelectedControls();
@@ -111,9 +113,4 @@ function initScrollCounter() {
 
   items.forEach((item) => observer.observe(item));
 
-  // scrollend = filet de sécurité : corrige toujours la valeur finale
-  const scrollTarget = document.querySelector('.selected-list') ?? window;
-  scrollTarget.addEventListener('scrollend', () => {
-    goTo(getClosestIndex(items));
-  }, { passive: true });
 }
