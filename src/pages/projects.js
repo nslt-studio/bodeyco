@@ -44,7 +44,7 @@ function showIndex() {
   // Masquage instantané de la grid
   gridItems.forEach((el) => {
     el.style.transition    = 'none';
-    el.style.opacity       = '0.1';
+    el.style.opacity       = '0.05';
     el.style.pointerEvents = 'none';
   });
 
@@ -101,7 +101,7 @@ function initIndexHover() {
 
     indexItem.addEventListener('mouseleave', () => {
       gridItem.style.transition = `opacity ${ITEM_DUR}ms ease`;
-      gridItem.style.opacity    = '0.1';
+      gridItem.style.opacity    = '0.05';
     });
   });
 }
