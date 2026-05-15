@@ -40,6 +40,8 @@ function getItems() {
 
 function showIndex() {
   const { gridItems, indexItems } = getItems();
+  const indexDiv = document.querySelector('.index');
+  if (indexDiv) indexDiv.style.pointerEvents = 'auto';
 
   // Masquage instantané de la grid
   gridItems.forEach((el) => {
@@ -64,6 +66,8 @@ function showIndex() {
 
 function showOverview() {
   const { gridItems, indexItems } = getItems();
+  const indexDiv = document.querySelector('.index');
+  if (indexDiv) indexDiv.style.pointerEvents = 'none';
 
   // Stagger out des index-items
   indexItems.forEach((el, i) => {
