@@ -100,7 +100,9 @@ function initIndexHover() {
     indexItem.addEventListener('mouseenter', () => {
       gridItem.style.transition = `opacity ${ITEM_DUR}ms ease`;
       gridItem.style.opacity    = '1';
-      getLenis()?.scrollTo(gridItem, { offset: 0, lerp: 0.08 });
+      if (window.innerWidth >= 992) {
+        getLenis()?.scrollTo(gridItem, { offset: 0, lerp: 0.08 });
+      }
     });
 
     indexItem.addEventListener('mouseleave', () => {
