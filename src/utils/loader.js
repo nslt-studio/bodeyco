@@ -2,7 +2,7 @@ import { getLenis } from './lenis.js';
 
 const INIT_DELAY   = 450;
 const DUR          = 300;
-const WORD_STAGGER = 60;
+const CHAR_STAGGER = 10;
 
 export function initLoader() {
   const loader   = document.querySelector('.loader');
@@ -11,11 +11,13 @@ export function initLoader() {
 
   getLenis()?.stop();
 
-  const words = headline.textContent.trim().split(/\s+/);
+  const chars = headline.textContent.trim().split('');
 
-  headline.innerHTML = words
-    .map(w => `<span style="display:inline-block;opacity:0;transform:translateY(12px)">${w}</span>`)
-    .join(' ');
+  headline.innerHTML = chars
+    .map(c => c === ' '
+      ? ' '
+      : `<span style="display:inline-block;opacity:0;transform:translateY(6px)">${c}</span>`)
+    .join('');
 
   headline.style.opacity = '1';
 
@@ -27,10 +29,10 @@ export function initLoader() {
         span.style.transition = `opacity ${DUR}ms ease, transform ${DUR}ms ease`;
         span.style.opacity    = '1';
         span.style.transform  = 'translateY(0px)';
-      }, i * WORD_STAGGER);
+      }, i * CHAR_STAGGER);
     });
 
-    const animInDone = (spans.length - 1) * WORD_STAGGER + DUR;
+    const animInDone = (spans.length - 1) * CHAR_STAGGER + DUR;
 
     setTimeout(() => {
       headline.style.transition = `opacity ${DUR}ms ease`;
