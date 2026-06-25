@@ -29,6 +29,29 @@ function initPage() {
   }
 }
 
+// Inject missing Turnstile token into Webflow form XHR submissions
+(function () {
+  const origOpen = XMLHttpRequest.prototype.open;
+  const origSend = XMLHttpRequest.prototype.send;
+  XMLHttpRequest.prototype.open = function (m, url) {
+    this._xhrUrl = url;
+    return origOpen.apply(this, arguments);
+  };
+  XMLHttpRequest.prototype.send = function (body) {
+    if (typeof this._xhrUrl === 'string' && this._xhrUrl.includes('/api/v1/form') && typeof body === 'string') {
+      if (!body.includes('cf-turnstile-response') && window.turnstile) {
+        try {
+          const token = window.turnstile.getResponse() || '';
+          if (token) {
+            body = body + '&fields%5Bcf-turnstile-response%5D=' + encodeURIComponent(token);
+          }
+        } catch {}
+      }
+    }
+    return origSend.apply(this, [body]);
+  };
+})();
+
 const swup = new Swup({
   containers: ['.page-transition'],
   animationSelector: '.page-transition',
@@ -41,12 +64,36 @@ initMedia();
 initClock();
 updateCurrentLinks();
 
+swup.hooks.on('visit:start', () => {
+  if (window.turnstile) {
+    document.querySelectorAll('iframe[id^="cf-chl-widget-"]').forEach((iframe) => {
+      try { window.turnstile.remove(iframe.id); } catch {}
+    });
+  }
+});
+
 swup.hooks.on('page:view', () => {
   initLenis();
   initPage();
   initMedia();
   initClock();
   updateCurrentLinks();
+
+  const newPageId = document.querySelector('.page-transition [data-wf-page-id]')?.getAttribute('data-wf-page-id');
+  if (newPageId) {
+    document.documentElement.setAttribute('data-wf-page', newPageId);
+  }
+
+  if (window.Webflow) {
+    window.Webflow.destroy();
+    window.Webflow.ready();
+    requestAnimationFrame(() => {
+      document.querySelectorAll('[type="submit"]:disabled').forEach((btn) => {
+        btn.disabled = false;
+      });
+    });
+  }
+
 });
 
 swup.hooks.on('link:click', (visit) => {
@@ -62,4 +109,3 @@ swup.hooks.on('link:click', (visit) => {
     }
   });
 });
-
