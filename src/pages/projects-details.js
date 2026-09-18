@@ -2,11 +2,13 @@ import EmblaCarousel from 'embla-carousel';
 import { pad, animateIndex } from '../utils/counter.js';
 import { initVideoControls } from '../utils/video-controls.js';
 import { getLenis } from '../utils/lenis.js';
+import { initVimeo } from '../utils/vimeo.js';
 
 export function initProjectsDetails() {
   initEmbla();
   initMoreButton();
   initCursor();
+  return initVimeo({ aspectRatioTarget: '.embla-video' });
 }
 
 function initCursor() {

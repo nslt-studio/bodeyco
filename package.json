@@ -23,6 +23,7 @@
   "homepage": "https://github.com/nslt-studio/bodeyco#readme",
   "dependencies": {
     "embla-carousel": "^8.6.0",
+    "lenis": "^1.3.23",
     "swup": "^4.9.0"
   },
   "devDependencies": {

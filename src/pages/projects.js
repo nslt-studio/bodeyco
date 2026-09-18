@@ -1,9 +1,12 @@
 import { getLenis } from '../utils/lenis.js';
+import { initViewportVideos } from '../utils/viewport-video.js';
+import { initVimeo } from '../utils/vimeo.js';
 
 export function initProjects() {
   initViewToggle();
   initIndexHover();
-  initLazyVideos();
+  initViewportVideos();
+  return initVimeo({ aspectRatioTarget: '.grid-video' });
 }
 
 const STAGGER   = 20;  // ms entre chaque item
@@ -109,48 +112,5 @@ function initIndexHover() {
       gridItem.style.transition = `opacity ${ITEM_DUR}ms ease`;
       gridItem.style.opacity    = '0.05';
     });
-  });
-}
-
-function initLazyVideos() {
-  const videos = [...document.querySelectorAll('video[data-src]')];
-  if (!videos.length) return;
-
-  // Load src when video enters viewport + 500px
-  const loadObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        const video = entry.target;
-        video.src = video.dataset.src;
-        loadObserver.unobserve(video);
-        if (video.dataset.shouldPlay) {
-          video.play().catch(() => {});
-        }
-      });
-    },
-    { rootMargin: '500px 0px' }
-  );
-
-  // Play/pause based on actual viewport visibility
-  const playObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        const video = entry.target;
-        if (entry.isIntersecting) {
-          video.dataset.shouldPlay = '1';
-          if (video.src) video.play().catch(() => {});
-        } else {
-          delete video.dataset.shouldPlay;
-          video.pause();
-        }
-      });
-    },
-    { threshold: 0.5 }
-  );
-
-  videos.forEach((video) => {
-    loadObserver.observe(video);
-    playObserver.observe(video);
   });
 }

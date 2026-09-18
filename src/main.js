@@ -8,7 +8,7 @@ import { initMedia } from './utils/media.js';
 import { updateCurrentLinks } from './utils/navigation.js';
 import { initLoader } from './utils/loader.js';
 import { initClock } from './utils/clock.js';
-import { initLenis } from './utils/lenis.js';
+import { initLenis, getLenis } from './utils/lenis.js';
 
 const PAGE_INIT = {
   home: initHome,
@@ -25,7 +25,7 @@ function getPageName() {
 function initPage() {
   const page = getPageName();
   if (page && PAGE_INIT[page]) {
-    PAGE_INIT[page]();
+    return PAGE_INIT[page]();
   }
 }
 
@@ -143,7 +143,12 @@ swup.hooks.on('visit:start', () => {
 
 swup.hooks.on('page:view', () => {
   initLenis();
-  initPage();
+  // Le ratio réel des vidéos (Vimeo/embla) n'arrive qu'après un fetch async ;
+  // s'il change la hauteur de page pendant que l'utilisateur défile déjà,
+  // Lenis se resynchronise et ça "saute". On coupe le scroll le temps que
+  // ça se stabilise, comme le fait déjà le loader au chargement initial.
+  getLenis()?.stop();
+  Promise.resolve(initPage()).finally(() => getLenis()?.start());
   initMedia();
   initClock();
   updateCurrentLinks();

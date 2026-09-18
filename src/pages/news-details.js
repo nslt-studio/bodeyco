@@ -3,12 +3,14 @@ import { initViewportVideos } from '../utils/viewport-video.js';
 import { initVideoControls } from '../utils/video-controls.js';
 import { getLenis } from '../utils/lenis.js';
 import { pad, animateIndex } from '../utils/counter.js';
+import { initVimeo } from '../utils/vimeo.js';
 
 export function initNewsDetails() {
   initViewportVideos();
   initEmbla();
   initCursor();
   initMoreButton();
+  return initVimeo({ aspectRatioTarget: '.embla-video' });
 }
 
 function initCursor() {

@@ -1,12 +1,13 @@
 import { pad, animateIndex } from '../utils/counter.js';
 import { initVideoControls } from '../utils/video-controls.js';
 import { destroyLenis } from '../utils/lenis.js';
+import { initVimeo } from '../utils/vimeo.js';
 
 export function initHome() {
   destroyLenis();
-  initSelectedAspectRatios();
   initScrollCounter();
   initSelectedControls();
+  return initVimeo({ aspectRatioTarget: '.selected-video-inner' });
 }
 
 function initSelectedControls() {
@@ -16,28 +17,6 @@ function initSelectedControls() {
     if (!video || !controls) return;
     controls.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); });
     initVideoControls(video, controls);
-  });
-}
-
-// ─── Aspect ratio ────────────────────────────────────────────────────────────
-
-function initSelectedAspectRatios() {
-  document.querySelectorAll('.selected-item').forEach((item) => {
-    const target = item.querySelector('.selected-video-inner');
-    const video  = target?.querySelector('video');
-    if (!target || !video) return;
-
-    const apply = () => {
-      if (video.videoWidth && video.videoHeight) {
-        target.style.aspectRatio = `${video.videoWidth} / ${video.videoHeight}`;
-      }
-    };
-
-    if (video.readyState >= 1) {
-      apply();
-    } else {
-      video.addEventListener('loadedmetadata', apply, { once: true });
-    }
   });
 }
 
@@ -66,15 +45,6 @@ function initScrollCounter() {
 
   let currentIndex = 0;
 
-  function loadVideosFrom(fromIndex, count = 4) {
-    for (let i = fromIndex; i < Math.min(fromIndex + count, items.length); i++) {
-      const video = items[i].querySelector('video');
-      if (video?.dataset.src && !video.getAttribute('src')) {
-        video.src = video.dataset.src;
-      }
-    }
-  }
-
   function setActiveVideo(newIndex) {
     items.forEach((item, i) => {
       const video = item.querySelector('video');
@@ -92,11 +62,9 @@ function initScrollCounter() {
     const direction = newIndex > currentIndex ? 1 : -1;
     currentIndex = newIndex;
     animateIndex(indexEl, newIndex + 1, direction);
-    loadVideosFrom(newIndex);
     setActiveVideo(newIndex);
   }
 
-  loadVideosFrom(0);
   setActiveVideo(0);
 
   // Live updates during scroll: pick the most visible entry in each batch
